@@ -1,0 +1,134 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: mvn
+  labels:
+    app.kubernetes.io/version: {{ .Chart.Version }}
+{{- if .Values.annotations }}
+  annotations:
+  {{- .Values.annotations | toYaml | nindent 4 }}
+{{- end }}
+spec:
+  description: >-
+    This Task can be used to run a Maven build.
+
+  workspaces:
+    - name: source
+      optional: false
+      description: The workspace consisting of maven project.
+
+  params:
+    - name: MAVEN_IMAGE
+      type: string
+      description: Maven base image
+      default: {{ .Values.images.mvn }}
+    - name: GOALS
+      description: maven goals to run
+      type: array
+      default:
+        - "package"
+    - name: MAVEN_MIRROR_URL
+      description: The Maven repository mirror url
+      type: string
+      default: ""
+    - name: SERVER_USER
+      description: The username for the server
+      type: string
+      default: ""
+    - name: SERVER_PASSWORD
+      description: The password for the server
+      type: string
+      default: ""
+    - name: PROXY_USER
+      description: The username for the proxy server
+      type: string
+      default: ""
+    - name: PROXY_PASSWORD
+      description: The password for the proxy server
+      type: string
+      default: ""
+    - name: PROXY_PORT
+      description: Port number for the proxy server
+      type: string
+      default: ""
+    - name: PROXY_HOST
+      description: Proxy server Host
+      type: string
+      default: ""
+    - name: PROXY_NON_PROXY_HOSTS
+      description: Non proxy server host
+      type: string
+      default: ""
+    - name: PROXY_PROTOCOL
+      description: Protocol for the proxy ie http or https
+      type: string
+      default: "http"
+    - name: CONTEXT_DIR
+      type: string
+      description: >-
+        The context directory within the repository for sources on
+        which we want to execute maven goals.
+      default: "."
+
+  stepTemplate:
+    env:
+{{- $variables := list
+      "params.MAVEN_IMAGE"
+      "params.MAVEN_MIRROR_URL"
+      "params.SERVER_USER"
+      "params.SERVER_PASSWORD"
+      "params.PROXY_USER"
+      "params.PROXY_PASSWORD"
+      "params.PROXY_PORT"
+      "params.PROXY_HOST"
+      "params.PROXY_NON_PROXY_HOSTS"
+      "params.PROXY_PROTOCOL"
+      "params.CONTEXT_DIR"
+      "workspaces.source.path"
+      "workspaces.source.volume"
+}}
+{{- include "environment" ( list $variables ) | nindent 6 }}
+
+  steps:
+{{- include "load_scripts" ( list . "mvn-" ) | nindent 4 }}
+
+    - name: mvn-generate
+      image: {{ .Values.images.minimal }}
+      env:
+        - name: HOME
+          value: /tekton/home
+      command:
+        - /scripts/mvn-generate.sh
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      volumeMounts:
+        - name: scripts-dir
+          mountPath: /scripts
+        - name: mvn-settings-dir
+          mountPath: /mvn-generate
+
+    - name: mvn-goals
+      env:
+        - name: HOME
+          value: /tekton/home
+      image: $(params.MAVEN_IMAGE)
+      workingDir: $(workspaces.source.path)/$(params.CONTEXT_DIR)
+      command: ["/usr/bin/mvn"]
+      args:
+        - -s
+        - mvn-generate/settings.xml
+        - "$(params.GOALS[*])"
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      volumeMounts:
+        - name: mvn-settings-dir
+          mountPath: /mvn-generate
+
+  volumes:
+    - name: scripts-dir
+      emptyDir: {}
+    - name: mvn-settings-dir
+      emptyDir: {}

@@ -1,0 +1,44 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  labels:
+    name: task-mvn
+  name: task-mvn
+spec:
+  workspaces:
+    - name: source
+      optional: false
+
+  params:
+    - name: URL
+      type: string
+    - name: REVISION
+      type: string
+    - name: VERBOSE
+      type: string
+
+  tasks:
+    - name: git
+      taskRef:
+        name: git
+      workspaces:
+        - name: output
+          workspace: source
+      params:
+        - name: URL
+          value: "$(params.URL)"
+        - name: REVISION
+          value: "$(params.REVISION)"
+        - name: SUBMODULES
+          value: "false"
+        - name: VERBOSE
+          value: "$(params.VERBOSE)"
+    - name: mvn
+      taskRef:
+        name: mvn
+      runAfter:
+        - git
+      workspaces:
+        - name: source
+          workspace: source
