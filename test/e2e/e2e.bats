@@ -4,17 +4,17 @@ source ./test/helper/helper.sh
 
 # E2E tests parameters for the test pipeline
 
-# Testing the mvn task,
-@test "[e2e] mvn task" {
+# Testing the maven task,
+@test "[e2e] maven task" {
     [ -n "${E2E_MAVEN_PARAMS_URL}" ]
     [ -n "${E2E_MAVEN_PARAMS_REVISION}" ]
 
-    run tkn pipeline start task-mvn \
+    run tkn pipeline start task-maven \
         --param="URL=${E2E_MAVEN_PARAMS_URL}" \
         --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \
         --param="VERBOSE=true" \
-        --workspace="name=source,claimName=task-mvn,subPath=source" \
-        --filename=test/e2e/resources/pipeline-mvn.yaml \
+        --workspace="name=source,claimName=task-maven,subPath=source" \
+        --filename=test/e2e/resources/pipeline-maven.yaml \
         --showlog
     assert_success
 

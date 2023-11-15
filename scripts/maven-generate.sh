@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -rx MAVEN_GENERATE_DIRECTORY="${WORKSPACES_SOURCE_PATH}/mvn-generate"
+declare -rx MAVEN_GENERATE_DIRECTORY="${WORKSPACES_SOURCE_PATH}/maven-generate"
 
 declare -rx MAVEN_SETTINGS_FILE="${MAVEN_GENERATE_DIRECTORY}/settings.xml"
 
@@ -53,12 +53,12 @@ if [ -n "${PARAMS_PROXY_HOST}" -a -n "${PARAMS_PROXY_PORT}" ]; then
     sed -i "s|<!-- ### HTTP proxy from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
 fi
 
-if [ -n "${PARAMS_SERVER_USER}" -a -n "${PARAMS_SERVER_PASSWORD}" ]; then
+if [ -n "${SERVER_USER}" -a -n "${SERVER_PASSWORD}" ]; then
     xml="<server>\
     <id>serverid</id>"
     xml="$xml\
-        <username>${PARAMS_SERVER_USER}</username>\
-        <password>${PARAMS_SERVER_PASSWORD}</password>"
+        <username>${SERVER_USER}</username>\
+        <password>${SERVER_PASSWORD}</password>"
     xml="$xml\
         </server>"
     sed -i "s|<!-- ### SERVER's USER INFO from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}

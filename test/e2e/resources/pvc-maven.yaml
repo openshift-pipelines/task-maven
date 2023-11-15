@@ -3,8 +3,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    name: task-mvn
-  name: task-mvn
+    name: task-maven
+  name: task-maven
 spec:
   accessModes:
     - ReadWriteOnce

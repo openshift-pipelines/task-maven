@@ -1,5 +1,5 @@
 apiVersion: v2
-name: task-mvn
+name: task-maven
 version: 0.0.1
 description: todo
 type: application

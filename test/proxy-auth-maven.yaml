@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proxy-auth-maven
+type: kubernetes.io/basic-auth
+stringData:
+  username: "" # required field for kubernetes.io/basic-auth
+  password: "" # required field for kubernetes.io/basic-auth

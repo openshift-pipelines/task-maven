@@ -9,7 +9,7 @@ BATS_FLAGS ?= --print-output-on-failure --show-output-of-passing-tests --verbose
 # path to the bats test files, overwite the variables below to tweak the test scope
 E2E_TESTS ?= ./test/e2e/*.bats
 
-E2E_PVC ?= test/e2e/resources/pvc-mvn.yaml
+E2E_PVC ?= test/e2e/resources/pvc-maven.yaml
 E2E_MAVEN_PARAMS_REVISION ?= master
 E2E_MAVEN_PARAMS_URL ?= https://github.com/shashirajraja/shopping-cart 
 E2E_TEST_DIR ?= ./test/e2e
@@ -71,6 +71,6 @@ test-e2e: bats
 
 # act runs the github actions workflows, so by default only running the test workflow (integration
 # and end-to-end) to avoid running the release workflow accidently
-# act: ARGS = --workflows=./.github/workflows/test.yaml
-# act:
-# 	act $(ARGS)
+act: ARGS = --workflows=./.github/workflows/test.yaml
+act:
+	act $(ARGS)

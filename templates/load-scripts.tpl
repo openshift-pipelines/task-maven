@@ -7,7 +7,7 @@
 {{- define "load_scripts" -}}
   {{- $global := index . 0 -}}
 - name: load-scripts
-  image: {{ $global.Values.images.bash }}
+  image: {{ $global.Values.images.minimal }}
   workingDir: /scripts
   script: |
     set -e

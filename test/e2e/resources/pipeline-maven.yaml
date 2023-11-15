@@ -3,8 +3,8 @@ apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
   labels:
-    name: task-mvn
-  name: task-mvn
+    name: task-maven
+  name: task-maven
 spec:
   workspaces:
     - name: source
@@ -34,9 +34,9 @@ spec:
           value: "false"
         - name: VERBOSE
           value: "$(params.VERBOSE)"
-    - name: mvn
+    - name: maven
       taskRef:
-        name: mvn
+        name: maven
       runAfter:
         - git
       workspaces:

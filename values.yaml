@@ -1,8 +1,7 @@
 ---
 images:
-  bash: docker.io/library/bash:latest
   minimal: registry.access.redhat.com/ubi8/ubi-minimal:8.2
-  mvn: registry.access.redhat.com/ubi8/openjdk-11:latest
+  maven: registry.access.redhat.com/ubi8/openjdk-11:latest
 
 annotations:
   tekton.dev/pipelines.minVersion: "0.38.0"
