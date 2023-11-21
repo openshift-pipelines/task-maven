@@ -34,9 +34,6 @@ function assert_tekton_resource () {
         {{- printf "%s\n" .message -}}
     {{- end -}}
 {{- end }}
-{{- range .status.taskResults }}
-    {{- printf "%s=%s\n" .name .value -}}
-{{- end -}}
 {{- range .status.results }}
     {{- printf "%s=%s\n" .name .value -}}
 {{- end -}}
