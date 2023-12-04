@@ -17,6 +17,8 @@ spec:
       type: string
     - name: VERBOSE
       type: string
+    - name: SERVER_SECRET
+      type: string
 
   tasks:
     - name: git
@@ -37,6 +39,9 @@ spec:
     - name: maven
       taskRef:
         name: maven
+      params:
+        - name: SERVER_SECRET
+          value: "$(params.SERVER_SECRET)"
       runAfter:
         - git
       workspaces:

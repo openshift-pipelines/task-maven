@@ -62,6 +62,7 @@ if [ -n "${SERVER_USER}" -a -n "${SERVER_PASSWORD}" ]; then
     xml="$xml\
         </server>"
     sed -i "s|<!-- ### SERVER's USER INFO from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
+    echo "SERVER Creds Updated"
 fi
 
 if [ -n "${PARAMS_MAVEN_MIRROR_URL}" ]; then

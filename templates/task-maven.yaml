@@ -34,6 +34,8 @@ spec:
         The subdirectory within the repository for sources on
         which we want to execute maven goals.
       default: "."
+    - name: SERVER_SECRET
+      type: string
 
   stepTemplate:
     env:
@@ -53,6 +55,16 @@ spec:
       env:
         - name: HOME
           value: /tekton/home
+        - name: SERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: $(params.SERVER_SECRET)
+              key: username
+        - name: SERVER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: $(params.SERVER_SECRET)
+              key: password
       command:
         - /scripts/maven-generate.sh
       securityContext:

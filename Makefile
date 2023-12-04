@@ -13,6 +13,7 @@ E2E_PVC ?= test/e2e/resources/pvc-maven.yaml
 E2E_MAVEN_PARAMS_REVISION ?= master
 E2E_MAVEN_PARAMS_URL ?= https://github.com/shashirajraja/shopping-cart 
 E2E_TEST_DIR ?= ./test/e2e
+E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
 
 # generic arguments employed on most of the targets
 ARGS ?=
@@ -38,7 +39,6 @@ endef
 # renders the task resource file printing it out on the standard output
 helm-template:
 	$(call render-template)
-
 # renders and installs the resources (task)
 install:
 	$(call render-template) |kubectl $(ARGS) apply -f -
