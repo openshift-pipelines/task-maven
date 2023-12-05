@@ -9,14 +9,6 @@ source ./test/helper/helper.sh
     [ -n "${E2E_MAVEN_PARAMS_URL}" ]
     [ -n "${E2E_MAVEN_PARAMS_REVISION}" ]
 
-    kubectl delete secret regcred || true
-    run kubectl create secret generic regcred \
-        --from-file=.dockerconfigjson=$HOME/.docker/config.json \
-        --type=kubernetes.io/dockerconfigjson
-    assert_success
-    run kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}'
-    assert_success
-
     run tkn pipeline start task-maven \
         --param="URL=${E2E_MAVEN_PARAMS_URL}" \
         --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \

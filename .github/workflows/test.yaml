@@ -52,4 +52,11 @@ jobs:
 
       # running end-to-end test target
       - name: test-e2e
-        run: make test-e2e
+        run: |
+          set -Eeuo pipefail
+          kubectl delete secret regcred || true
+          kubectl create secret generic regcred \
+            --from-file=.dockerconfigjson=$HOME/.docker/config.json \
+          --type=kubernetes.io/dockerconfigjson
+          kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}'
+          make test-e2e

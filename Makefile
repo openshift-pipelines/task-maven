@@ -69,6 +69,15 @@ test-e2e: prepare-e2e
 test-e2e: E2E_TESTS = $(E2E_TEST_DIR)/*.bats
 test-e2e: bats
 
+# Run all the end-to-end tests against the current openshift context.
+# It is used mainly by the CI and ideally shouldn't differ that much from test-e2e
+.PHONY: prepare-e2e-openshift
+prepare-e2e-openshift:
+	./hack/install-osp.sh $(OSP_VERSION)
+.PHONY: test-e2e-openshift
+test-e2e-openshift: prepare-e2e-openshift
+test-e2e-openshift: test-e2e
+
 # act runs the github actions workflows, so by default only running the test workflow (integration
 # and end-to-end) to avoid running the release workflow accidently
 act: ARGS = --workflows=./.github/workflows/test.yaml
