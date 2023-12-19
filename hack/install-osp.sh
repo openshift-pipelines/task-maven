@@ -51,7 +51,8 @@ metadata:
   namespace: openshift-marketplace         
 spec:                                                                                                                                                                                                                                                
   sourceType: grpc                     
-  image: quay.io/openshift-pipeline/openshift-pipelines-operator-index:1.10
+  # image: quay.io/openshift-pipeline/openshift-pipelines-operator-index:5.0
+  image: quay.io/openshift-pipeline/openshift-pipelines-pipelines-operator-bundle-container-index:v4.14-candidate
   displayName: "Custom OSP Nightly"
   updateStrategy:
     registryPoll:
