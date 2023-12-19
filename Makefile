@@ -18,15 +18,6 @@ E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
 # generic arguments employed on most of the targets
 ARGS ?=
 
-# external task dependency to run the end-to-end tests pipeline
-TASK_GIT ?= https://github.com/openshift-pipelines/task-git/releases/download/0.0.1/task-git-0.0.1.yaml
-
-# installs "git" task directly from the informed location, the task is required to run the test-e2e
-# target, it will hold the "source" workspace data
-.PHONY: task-git
-task-git:
-	kubectl apply -f $(TASK_GIT)
-
 # making sure the variables declared in the Makefile are exported to the excutables/scripts invoked
 # on all targets
 .EXPORT_ALL_VARIABLES:
@@ -58,7 +49,7 @@ bats: install
 	$(BATS_CORE) $(BATS_FLAGS) $(ARGS) $(E2E_TESTS)
 
 .PHONY: prepare-e2e
-prepare-e2e: task-git
+prepare-e2e:
 	kubectl apply -f ${E2E_PVC}
 
 # run end-to-end tests against the current kuberentes context, it will required a cluster with tekton
