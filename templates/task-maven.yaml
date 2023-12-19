@@ -17,6 +17,9 @@ spec:
     - name: source
       optional: false
       description: The workspace consisting of maven project.
+    - name: sever_secret
+      optional: true
+      description: The workspace containing server secrets (user and password file)
 
   params:
     - name: GOALS
@@ -34,8 +37,6 @@ spec:
         The subdirectory within the repository for sources on
         which we want to execute maven goals.
       default: "."
-    - name: SERVER_SECRET
-      type: string
 
   stepTemplate:
     env:
@@ -43,7 +44,9 @@ spec:
       "params.MAVEN_MIRROR_URL"
       "params.SUBDIRECTORY"
       "workspaces.source.path"
-      "workspaces.source.volume"
+      "workspaces.source.bound"
+      "workspaces.server_secret.path"
+      "workspaces.server_secret.bound"
 }}
 {{- include "environment" ( list $variables ) | nindent 6 }}
 

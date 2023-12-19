@@ -18,7 +18,7 @@ source ./test/helper/helper.sh
         --param="URL=${E2E_MAVEN_PARAMS_URL}" \
         --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \
         --param="VERBOSE=true" \
-        --param="SERVER_SECRET=${E2E_MAVEN_PARAMS_SERVER_SECRET}" \
+        --workspace="name=server_secret,secret=${E2E_MAVEN_PARAMS_SERVER_SECRET}" \
         --workspace="name=source,claimName=task-maven,subPath=source" \
         --filename=test/e2e/resources/pipeline-maven.yaml \
         --showlog

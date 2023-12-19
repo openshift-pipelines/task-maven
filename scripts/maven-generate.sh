@@ -53,16 +53,25 @@ if [ -n "${PARAMS_PROXY_HOST}" -a -n "${PARAMS_PROXY_PORT}" ]; then
     sed -i "s|<!-- ### HTTP proxy from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
 fi
 
-if [ -n "${SERVER_USER}" -a -n "${SERVER_PASSWORD}" ]; then
-    xml="<server>\
-    <id>serverid</id>"
-    xml="$xml\
+if [[ "${WORKSPACES_SERVER_SECRET_BOUND}" == "true" ]]; then
+    if test -f ${WORKSPACES_SERVER_SECRET_PATH}/username && test -f${WORKSPACES_SERVER_SECRET_PATH}/password; then
+	SERVER_USER=$(cat ${WORKSPACES_SERVER_SECRET_PATH}/username)
+	SERVER_PASSWORD=$(cat ${WORKSPACES_SERVER_SECRET_PATH}/password)
+	if [ -n "${SERVER_USER}" -a -n "${SERVER_PASSWORD}" ]; then
+	    xml="<server>\
+        <id>serverid</id>"
+	    xml="$xml\
         <username>${SERVER_USER}</username>\
         <password>${SERVER_PASSWORD}</password>"
-    xml="$xml\
+	    xml="$xml\
         </server>"
-    sed -i "s|<!-- ### SERVER's USER INFO from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
-    echo "SERVER Creds Updated"
+	    sed -i "s|<!-- ### SERVER's USER INFO from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
+	    echo "SERVER Creds Updated"
+	fi
+    else
+	echo "no 'user' or 'password' file found at workspace server_secret"
+        exit 1
+    fi
 fi
 
 if [ -n "${PARAMS_MAVEN_MIRROR_URL}" ]; then
