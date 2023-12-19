@@ -30,9 +30,41 @@ endef
 # renders the task resource file printing it out on the standard output
 helm-template:
 	$(call render-template)
+
 # renders and installs the resources (task)
 install:
 	$(call render-template) |kubectl $(ARGS) apply -f -
+
+# pepare a release
+.PHONY: prepare-release
+prepare-release:
+	mkdir -p $(RELEASE_DIR) || true
+	hack/release.sh $(RELEASE_DIR)
+
+.PHONY: release
+release: prepare-release
+	pushd ${RELEASE_DIR} && \
+		go run github.com/openshift-pipelines/tektoncd-catalog/cmd/catalog-cd@main \
+			release \
+			--output release \
+			--version $(CHART_VERSION) \
+			tasks/* \
+		; \
+	popd
+
+# tags the repository with the RELEASE_VERSION and pushes to "origin"
+git-tag-release-version:
+	if ! git rev-list "${RELEASE_VERSION}".. >/dev/null; then \
+		git tag "$(RELEASE_VERSION)" && \
+			git push origin --tags; \
+	fi
+
+# github-release
+.PHONY: github-release
+github-release: git-tag-release-version release
+	gh release create $(RELEASE_VERSION) --generate-notes && \
+	gh release upload $(RELEASE_VERSION) $(RELEASE_DIR)/release/catalog.yaml && \
+	gh release upload $(RELEASE_VERSION) $(RELEASE_DIR)/release/resources.tar.gz
 
 # packages the helm-chart as a single tarball, using it's name and version to compose the file
 helm-package: clean
