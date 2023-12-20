@@ -9,6 +9,8 @@ spec:
   workspaces:
     - name: source
       optional: false
+    - name: server_secret
+      optional: true
 
   params:
     - name: URL
@@ -16,8 +18,6 @@ spec:
     - name: REVISION
       type: string
     - name: VERBOSE
-      type: string
-    - name: SERVER_SECRET
       type: string
 
   tasks:

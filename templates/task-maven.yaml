@@ -58,16 +58,6 @@ spec:
       env:
         - name: HOME
           value: /tekton/home
-        - name: SERVER_USER
-          valueFrom:
-            secretKeyRef:
-              name: $(params.SERVER_SECRET)
-              key: username
-        - name: SERVER_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: $(params.SERVER_SECRET)
-              key: password
       command:
         - /scripts/maven-generate.sh
       securityContext:
