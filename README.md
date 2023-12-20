@@ -6,7 +6,11 @@ The `maven` Task can be used to run a Maven goal on a simple or multi-module mav
 
 ### `source`
 
-The `source` is a required workspace, that contains the source of the "maven" project to build. It should contain a `pom.xml`.
+The `source` workspace is required. It contains the source of the "maven" project to build. It should contain a `pom.xml`.
+
+## `server_secret` (optional)
+
+The `server_secret` is optional. It should contain two *files* : `username` and `password`. It is possible to bind a `ConfigMap` or a `Secret` to this workspace ; in that case, the `ConfigMap` or `Secret` should have a `username` and a `password` key.
 
 ## Parameters
 
