@@ -7,3 +7,11 @@ annotations:
   tekton.dev/pipelines.minVersion: "0.41.0"
   tekton.dev/categories: containers
   tekton.dev/tags: containers
+  artifacthub.io/maintainers: |
+      - name: OpenShift Pipeline task maintainers
+        email: pipelines-extcomm@redhat.com
+  artifacthub.io/provider: Red Hat
+  artifacthub.io/recommendations: |
+      - url: https://tekton.dev/
+  artifacthub.io/category: integration-delivery
+
