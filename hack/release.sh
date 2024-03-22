@@ -42,7 +42,6 @@ release() {
     [[ ! -d "${RELEASE_DIR}" ]] &&
         panic "Release dir is not found '${RELEASE_DIR}'!"
 
-    # releasing task-git (it's the only task)
     # See task-containers if there is more than one task to support.
     declare task_name=task-maven
     declare task_doc=README.md

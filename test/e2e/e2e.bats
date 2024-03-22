@@ -10,10 +10,6 @@ source ./test/helper/helper.sh
     [ -n "${E2E_MAVEN_PARAMS_REVISION}" ]
     [ -n "${E2E_MAVEN_PARAMS_SERVER_SECRET}" ]
     
-    kubectl delete secret secret-maven || true
-
-    kubectl apply -f test/e2e/resources/secret-maven.yaml
-
     run tkn pipeline start task-maven \
         --param="URL=${E2E_MAVEN_PARAMS_URL}" \
         --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \

@@ -21,8 +21,9 @@ BATS_FLAGS ?= --print-output-on-failure --show-output-of-passing-tests --verbose
 E2E_TESTS ?= ./test/e2e/*.bats
 
 E2E_PVC ?= test/e2e/resources/pvc-maven.yaml
+E2E_SECRET ?= test/e2e/resources/secret-maven.yaml
 E2E_MAVEN_PARAMS_REVISION ?= master
-E2E_MAVEN_PARAMS_URL ?= https://github.com/shashirajraja/shopping-cart 
+E2E_MAVEN_PARAMS_URL ?= https://github.com/Aneesh-M-Bhat/shopping-cart-test-java
 E2E_TEST_DIR ?= ./test/e2e
 E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
 
@@ -65,7 +66,7 @@ prepare-release:
 	hack/release.sh $(RELEASE_DIR)
 
 .PHONY: release
-release: prepare-release
+release: ${CATALOGCD} prepare-release
 	pushd ${RELEASE_DIR} && \
 		$(CATALOGCD) release \
 			--output release \
@@ -105,6 +106,7 @@ bats: install
 .PHONY: prepare-e2e
 prepare-e2e:
 	kubectl apply -f ${E2E_PVC}
+	kubectl apply -f ${E2E_SECRET}
 
 # run end-to-end tests against the current kuberentes context, it will required a cluster with tekton
 # pipelines and other requirements installed, before start testing the target invokes the

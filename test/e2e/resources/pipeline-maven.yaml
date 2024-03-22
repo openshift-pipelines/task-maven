@@ -21,7 +21,7 @@ spec:
       type: string
 
   tasks:
-    - name: git
+    - name: git-clone
       taskRef:
         resolver: git
         params:
@@ -30,7 +30,7 @@ spec:
           - name: revision
             value: p
           - name: pathInRepo
-            value: tasks/task-git/0.2.0/task-git.yaml
+            value: tasks/task-git-clone/0.3.0/task-git-clone.yaml
       workspaces:
         - name: output
           workspace: source
@@ -49,8 +49,11 @@ spec:
       params:
         - name: SERVER_SECRET
           value: "$(params.SERVER_SECRET)"
+        - name: GOALS
+          value:
+            - "validate"
       runAfter:
-        - git
+        - git-clone
       workspaces:
         - name: source
           workspace: source
