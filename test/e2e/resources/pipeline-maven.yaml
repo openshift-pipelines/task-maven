@@ -11,6 +11,11 @@ spec:
       optional: false
     - name: server_secret
       optional: true
+    - name: proxy_secret
+      optional: true
+    - name: proxy_configmap
+      optional: true
+
 
   params:
     - name: URL

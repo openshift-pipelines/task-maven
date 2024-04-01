@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-proxy-maven
+data:
+  proxy_host: "some-proxy-host"
+  proxy_port: "8080"
+  proxy_protocol: "http"
+  proxy_non_proxy_hosts: "example.com"

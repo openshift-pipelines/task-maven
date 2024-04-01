@@ -32,25 +32,41 @@ EOF
 cat "${MAVEN_SETTINGS_FILE}"
 
 xml=""
-if [ -n "${PARAMS_PROXY_HOST}" -a -n "${PARAMS_PROXY_PORT}" ]; then
-    xml="<proxy>\
-    <id>genproxy</id>\
-    <active>true</active>\
-    <protocol>${PARAMS_PROXY_PROTOCOL}</protocol>\
-    <host>${PARAMS_PROXY_HOST}</host>\
-    <port>${PARAMS_PROXY_PORT}</port>"
-    if [ -n "${PARAMS_PROXY_USER}" -a -n "${PARAMS_PROXY_PASSWORD}" ]; then
-    xml="$xml\
-        <username>${PARAMS_PROXY_USER}</username>\
-        <password>${PARAMS_PROXY_PASSWORD}</password>"
-    fi
-    if [ -n "${PARAMS_PROXY_NON_PROXY_HOSTS}" ]; then
-    xml="$xml\
-        <nonProxyHosts>${PARAMS_PROXY_NON_PROXY_HOSTS}</nonProxyHosts>"
-    fi
-    xml="$xml\
+if [[ "${WORKSPACES_PROXY_SECRET_BOUND}" == "true" ]]; then
+    if test -f ${WORKSPACES_PROXY_SECRET_PATH}/username && test -f ${WORKSPACES_PROXY_SECRET_PATH}/password; then
+    PARAMS_PROXY_USER=$(cat ${WORKSPACES_PROXY_SECRET_PATH}/username)
+    PARAMS_PROXY_PASSWORD=$(cat ${WORKSPACES_PROXY_SECRET_PATH}/password)
+
+    # Fetching proxy configuration values from ConfigMap workspace
+    PARAMS_PROXY_HOST=$(cat ${WORKSPACES_PROXY_CONFIGMAP_PATH}/proxy_host)
+    PARAMS_PROXY_PORT=$(cat ${WORKSPACES_PROXY_CONFIGMAP_PATH}/proxy_port)
+    PARAMS_PROXY_PROTOCOL=$(cat ${WORKSPACES_PROXY_CONFIGMAP_PATH}/proxy_protocol)
+    PARAMS_PROXY_NON_PROXY_HOSTS=$(cat ${WORKSPACES_PROXY_CONFIGMAP_PATH}/proxy_non_proxy_hosts)
+
+    if [ -n "${PARAMS_PROXY_HOST}" -a -n "${PARAMS_PROXY_PORT}" ]; then
+        xml="<proxy>\
+        <id>genproxy</id>\
+        <active>true</active>\
+        <protocol>${PARAMS_PROXY_PROTOCOL}</protocol>\
+        <host>${PARAMS_PROXY_HOST}</host>\
+        <port>${PARAMS_PROXY_PORT}</port>"
+        if [ -n "${PARAMS_PROXY_USER}" -a -n "${PARAMS_PROXY_PASSWORD}" ]; then
+            xml="$xml\
+            <username>${PARAMS_PROXY_USER}</username>\
+            <password>${PARAMS_PROXY_PASSWORD}</password>"
+        fi
+        if [ -n "${PARAMS_PROXY_NON_PROXY_HOSTS}" ]; then
+            xml="$xml\
+            <nonProxyHosts>${PARAMS_PROXY_NON_PROXY_HOSTS}</nonProxyHosts>"
+        fi
+        xml="$xml\
         </proxy>"
-    sed -i "s|<!-- ### HTTP proxy from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
+        sed -i "s|<!-- ### HTTP proxy from ENV ### -->|$xml|" ${MAVEN_SETTINGS_FILE}
+    fi
+    else
+        echo "no 'username' or 'password' file found at workspace proxy_secret"
+        exit 1
+    fi
 fi
 
 if [[ "${WORKSPACES_SERVER_SECRET_BOUND}" == "true" ]]; then

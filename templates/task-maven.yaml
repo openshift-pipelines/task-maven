@@ -17,9 +17,15 @@ spec:
     - name: source
       optional: false
       description: The workspace consisting of maven project.
-    - name: sever_secret
+    - name: server_secret
       optional: true
       description: The workspace containing server secrets (user and password file)
+    - name: proxy_secret
+      optional: true
+      description: The workspace containing proxy server access credentials.
+    - name: proxy_configmap
+      optional: true
+      description: The workspace containing some proxy values (proxy_port,proxy_host,proxy_non_proxy_hosts)
 
   params:
     - name: GOALS
@@ -47,6 +53,10 @@ spec:
       "workspaces.source.bound"
       "workspaces.server_secret.path"
       "workspaces.server_secret.bound"
+      "workspaces.proxy_secret.path"
+      "workspaces.proxy_secret.bound"
+      "workspaces.proxy_configmap.path"
+      "workspaces.proxy_configmap.bound"
 }}
 {{- include "environment" ( list $variables ) | nindent 6 }}
 

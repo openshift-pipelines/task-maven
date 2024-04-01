@@ -22,10 +22,14 @@ E2E_TESTS ?= ./test/e2e/*.bats
 
 E2E_PVC ?= test/e2e/resources/pvc-maven.yaml
 E2E_SECRET ?= test/e2e/resources/secret-maven.yaml
+E2E_PROXY_SECRET ?= test/e2e/resources/secret-proxy-maven.yaml                #
+E2E_CONFIGMAP ?= test/e2e/resources/configmap-proxy-maven.yaml                #
 E2E_MAVEN_PARAMS_REVISION ?= master
 E2E_MAVEN_PARAMS_URL ?= https://github.com/Aneesh-M-Bhat/shopping-cart-test-java
 E2E_TEST_DIR ?= ./test/e2e
 E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
+E2E_MAVEN_PARAMS_PROXY_SECRET ?= secret-proxy-maven                               #
+E2E_MAVEN_PARAMS_PROXY_CONFIGMAP ?= config-proxy-maven                              #
 
 # generic arguments employed on most of the targets
 ARGS ?=
@@ -107,6 +111,8 @@ bats: install
 prepare-e2e:
 	kubectl apply -f ${E2E_PVC}
 	kubectl apply -f ${E2E_SECRET}
+	kubectl apply -f ${E2E_PROXY_SECRET}
+	kubectl apply -f ${E2E_CONFIGMAP}
 
 # run end-to-end tests against the current kuberentes context, it will required a cluster with tekton
 # pipelines and other requirements installed, before start testing the target invokes the
