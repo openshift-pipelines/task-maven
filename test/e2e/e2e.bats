@@ -19,6 +19,7 @@ source ./test/helper/helper.sh
         --workspace="name=server_secret,secret=${E2E_MAVEN_PARAMS_SERVER_SECRET}" \
         --workspace="name=proxy_secret,secret=${E2E_MAVEN_PARAMS_PROXY_SECRET}" \
         --workspace="name=proxy_configmap,secret=${E2E_MAVEN_PARAMS_PROXY_CONFIGMAP}" \
+        --workspace name=maven_settings,volumeClaimTemplateFile=./test/e2e/resources/workspace-template.yaml \
         --workspace="name=source,claimName=task-maven,subPath=source" \
         --filename=test/e2e/resources/pipeline-maven.yaml \
         --showlog
