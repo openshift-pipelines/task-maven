@@ -25,7 +25,7 @@ spec:
       description: The workspace containing proxy server access credentials (username, password).
     - name: proxy_configmap
       optional: true
-      description: The workspace containing some proxy values (proxy_port,proxy_host,proxy_non_proxy_hosts)
+      description: The workspace containing some proxy values (proxy_port,proxy_host,proxy_protocol,proxy_non_proxy_hosts)
     - name: maven_settings
       optional: true
       description: The workspace consisting of the custom maven settings provided by the user.
