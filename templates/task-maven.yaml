@@ -65,15 +65,13 @@ spec:
 {{- include "environment" ( list $variables ) | nindent 6 }}
 
   steps:
-{{- include "load_scripts" ( list . "maven-" ) | nindent 4 }}
-
     - name: maven-generate
       image: {{ .Values.images.minimal }}
       env:
         - name: HOME
           value: /tekton/home
-      command:
-        - /scripts/maven-generate.sh
+      script: |
+{{- include "load_scripts" ( list . ( list "maven-" ) ( list "/scripts/maven-generate.sh" ) ) | nindent 8 }}
       securityContext:
         runAsNonRoot: true
         runAsUser: 65532
