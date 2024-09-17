@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -rx MAVEN_GENERATE_DIRECTORY="${WORKSPACES_SOURCE_PATH}/maven-generate"
+declare -rx MAVEN_GENERATE_DIRECTORY="${WORKSPACES_SOURCE_PATH}/${PARAMS_SUBDIRECTORY}/maven-generate"
 
 declare -rx MAVEN_SETTINGS_FILE="${MAVEN_GENERATE_DIRECTORY}/settings.xml"
 

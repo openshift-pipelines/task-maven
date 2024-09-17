@@ -14,7 +14,6 @@ set -e
 printf '%s' "{{ $content | toString | b64enc }}" |base64 -d >"/scripts/{{ $name }}"
     {{- end }}
   {{- end }}
-ls /scripts/{{ $prefix }}*.sh;
 chmod +x /scripts/{{ $prefix }}*.sh;
 {{- end }}
 
