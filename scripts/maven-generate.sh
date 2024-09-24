@@ -10,6 +10,8 @@ if [[ -f ${MAVEN_SETTINGS_FILE} ]]; then
     exit 0
 fi
 
+mkdir "${MAVEN_GENERATE_DIRECTORY}"
+
 # Check if settings.xml exists in the workspace maven-settings
 if [[ -f "${WORKSPACES_MAVEN_SETTINGS_PATH}/settings.xml" ]]; then
     cp "${WORKSPACES_MAVEN_SETTINGS_PATH}/settings.xml" "${MAVEN_SETTINGS_FILE}"
@@ -17,9 +19,6 @@ if [[ -f "${WORKSPACES_MAVEN_SETTINGS_PATH}/settings.xml" ]]; then
     cat ${MAVEN_SETTINGS_FILE}
     exit 0
 fi
-
-
-mkdir "${MAVEN_GENERATE_DIRECTORY}"
 
 cat > "${MAVEN_SETTINGS_FILE}" <<EOF
 <settings>
