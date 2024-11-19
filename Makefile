@@ -22,14 +22,17 @@ E2E_TESTS ?= ./test/e2e/*.bats
 
 E2E_PVC ?= test/e2e/resources/pvc-maven.yaml
 E2E_SECRET ?= test/e2e/resources/secret-maven.yaml
-E2E_PROXY_SECRET ?= test/e2e/resources/secret-proxy-maven.yaml                #
-E2E_CONFIGMAP ?= test/e2e/resources/configmap-proxy-maven.yaml                #
+E2E_PROXY_SECRET ?= test/e2e/resources/secret-proxy-maven.yaml                
+E2E_CONFIGMAP ?= test/e2e/resources/configmap-proxy-maven.yaml                
 E2E_MAVEN_PARAMS_REVISION ?= master
 E2E_MAVEN_PARAMS_URL ?= https://github.com/Aneesh-M-Bhat/shopping-cart-test-java
 E2E_TEST_DIR ?= ./test/e2e
 E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
-E2E_MAVEN_PARAMS_PROXY_SECRET ?= secret-proxy-maven                               #
-E2E_MAVEN_PARAMS_PROXY_CONFIGMAP ?= config-proxy-maven                              #
+E2E_MAVEN_PARAMS_PROXY_SECRET ?= secret-proxy-maven                               
+E2E_MAVEN_PARAMS_PROXY_CONFIGMAP ?= config-proxy-maven                              
+
+
+E2E_JIB_MAVEN_IMAGE ?= docker.io/aneeshmbhat/tekton-maven:latest
 
 # generic arguments employed on most of the targets
 ARGS ?=
@@ -121,6 +124,16 @@ prepare-e2e:
 test-e2e: prepare-e2e
 test-e2e: E2E_TESTS = $(E2E_TEST_DIR)/*.bats
 test-e2e: bats
+
+.PHONY: test-e2e-jib
+test-e2e-jib: prepare-e2e
+test-e2e-jib: E2E_TESTS = $(E2E_TEST_DIR)/*-jib.bats
+test-e2e-jib: bats
+
+.PHONY: test-e2e-maven
+test-e2e-maven: prepare-e2e
+test-e2e-maven: E2E_TESTS = $(E2E_TEST_DIR)/*-maven.bats
+test-e2e-maven: bats
 
 # Run all the end-to-end tests against the current openshift context.
 # It is used mainly by the CI and ideally shouldn't differ that much from test-e2e

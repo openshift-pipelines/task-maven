@@ -1,0 +1,100 @@
+---
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  labels:
+    name: task-jib-maven
+  name: task-jib-maven
+spec:
+  workspaces:
+    - name: source
+      optional: false
+    - name: dockerconfig
+      optional: true
+
+  params:
+    - name: URL
+      type: string
+    - name: REVISION
+      type: string
+    - name: VERBOSE
+      type: string
+    - name: IMAGE
+      type: string
+
+  tasks:
+    - name: git-clone
+      taskRef:
+        resolver: git
+        params:
+          - name: url
+            value: https://github.com/openshift-pipelines/tektoncd-catalog
+          - name: revision
+            value: p
+          - name: pathInRepo
+            value: tasks/task-git-clone/0.3.0/task-git-clone.yaml
+      workspaces:
+        - name: output
+          workspace: source
+      params:
+        - name: URL
+          value: "$(params.URL)"
+        - name: REVISION
+          value: "$(params.REVISION)"
+        - name: SUBMODULES
+          value: "false"
+        - name: VERBOSE
+          value: "$(params.VERBOSE)"
+        - name: SUBDIRECTORY
+          value: $(context.pipelineRun.name)
+    - name: maven-clean
+      taskRef:
+        name: maven
+      params:
+        - name: GOALS
+          value:
+            - "clean"
+        - name: MAVEN_MIRROR_URL
+          value: ""
+        - name: SUBDIRECTORY
+          value: $(context.pipelineRun.name)
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: source
+    - name: maven-package
+      taskRef:
+        name: maven
+      params:
+        - name: GOALS
+          value:
+            - "package"
+        - name: MAVEN_MIRROR_URL
+          value: ""
+        - name: SUBDIRECTORY
+          value: $(context.pipelineRun.name)
+      runAfter:
+        - maven-clean
+      workspaces:
+        - name: source
+          workspace: source
+    - name: jib-maven
+      taskRef:
+        name: jib-maven
+      params:
+        - name: IMAGE
+          value: "$(params.IMAGE)"
+        - name: DIRECTORY
+          value: $(context.pipelineRun.name)
+        - name: INSECUREREGISTRY
+          value: "false"
+        - name: CACERTFILE
+          value: ""
+      runAfter:
+        - maven-package
+      workspaces:
+        - name: source
+          workspace: source
+        - name: dockerconfig
+          workspace: dockerconfig
