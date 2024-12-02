@@ -88,7 +88,7 @@ spec:
         - name: DIRECTORY
           value: $(context.pipelineRun.name)
         - name: INSECUREREGISTRY
-          value: "false"
+          value: "true"
         - name: CACERTFILE
           value: ""
       runAfter:

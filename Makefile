@@ -31,8 +31,17 @@ E2E_MAVEN_PARAMS_SERVER_SECRET ?= secret-maven
 E2E_MAVEN_PARAMS_PROXY_SECRET ?= secret-proxy-maven                               
 E2E_MAVEN_PARAMS_PROXY_CONFIGMAP ?= config-proxy-maven                              
 
+# container registry URL, usually hostname and port
+REGISTRY_URL ?= registry.registry.svc.cluster.local:32222
+# container registry namespace, as in the section of the registry allowed to push images
+REGISTRY_NAMESPACE ?= task-containers
+# base part of a fully qualified container image name
+IMAGE_BASE ?= $(REGISTRY_URL)/$(REGISTRY_NAMESPACE)
 
-E2E_JIB_MAVEN_IMAGE ?= docker.io/aneeshmbhat/tekton-maven:latest
+E2E_JIB_MAVEN_IMAGE_TAG ?= task-jib-maven:latest
+
+E2E_JIB_MAVEN_IMAGE ?= $(IMAGE_BASE)/${E2E_JIB_MAVEN_IMAGE_TAG}
+# E2E_JIB_MAVEN_IMAGE ?= docker.io/aneeshmbhat/tekton-maven:latest
 
 # generic arguments employed on most of the targets
 ARGS ?=
@@ -126,6 +135,8 @@ test-e2e: E2E_TESTS = $(E2E_TEST_DIR)/*.bats
 test-e2e: bats
 
 .PHONY: test-e2e-jib
+test-e2e-jib: REGISTRY_URL = image-registry.openshift-image-registry.svc.cluster.local:5000
+test-e2e-jib: REGISTRY_NAMESPACE = $(shell oc project -q)
 test-e2e-jib: prepare-e2e
 test-e2e-jib: E2E_TESTS = $(E2E_TEST_DIR)/*-jib.bats
 test-e2e-jib: bats
