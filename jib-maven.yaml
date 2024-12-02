@@ -1,0 +1,103 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  annotations:
+    artifacthub.io/category: integration-delivery
+    artifacthub.io/maintainers: |
+      - name: OpenShift Pipeline task maintainers
+        email: pipelines-extcomm@redhat.com
+    artifacthub.io/provider: Red Hat
+    artifacthub.io/recommendations: |
+      - url: https://tekton.dev/
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"tekton.dev/v1","kind":"Task","metadata":{"annotations":{"artifacthub.io/category":"integration-delivery","artifacthub.io/maintainers":"- name: OpenShift Pipeline task maintainers\n  email: pipelines-extcomm@redhat.com\n","artifacthub.io/provider":"Red Hat","artifacthub.io/recommendations":"- url: https://tekton.dev/\n","tekton.dev/categories":"containers","tekton.dev/pipelines.minVersion":"0.41.0","tekton.dev/tags":"containers"},"labels":{"app.kubernetes.io/version":"0.3.2"},"name":"jib-maven","namespace":"anebhat"},"spec":{"description":"This Task builds Java/Kotlin/Groovy/Scala source into a container image using Google's Jib tool. Jib works with Maven and Gradle projects, and this template is for Maven projects.","params":[{"description":"Name of the image to build","name":"IMAGE"},{"default":".","description":"The directory containing the app, relative to the source repository root","name":"DIRECTORY","type":"string"},{"default":"false","description":"Whether to allow insecure registry","name":"INSECUREREGISTRY","type":"string"},{"default":"service-ca.crt","description":"CA cert file name for insecure registry service","name":"CACERTFILE","type":"string"}],"results":[{"description":"Digest of the image just built.","name":"IMAGE_DIGEST"}],"stepTemplate":{"env":[{"name":"PARAMS_DIRECTORY","value":"$(params.DIRECTORY)"},{"name":"WORKSPACES_SOURCE_PATH","value":"$(workspaces.source.path)"},{"name":"WORKSPACES_SSLCERTDIR_PATH","value":"$(workspaces.sslcertdir.path)"},{"name":"WORKSPACES_DOCKERCONFIG_BOUND","value":"$(workspaces.dockerconfig.bound)"},{"name":"WORKSPACES_DOCKERCONFIG_PATH","value":"$(workspaces.dockerconfig.path)"},{"name":"PARAMS_CACERTFILE","value":"$(params.CACERTFILE)"},{"name":"PARAMS_INSECUREREGISTRY","value":"$(params.INSECUREREGISTRY)"},{"name":"PARAMS_IMAGE","value":"$(params.IMAGE)"},{"name":"RESULTS_IMAGE_DIGEST_PATH","value":"$(results.IMAGE_DIGEST.path)"}]},"steps":[{"env":[{"name":"HOME","value":"/tekton/home"}],"image":"registry.access.redhat.com/ubi8/openjdk-11:latest","name":"build-and-push","script":"set -e\nprintf '%s' \"IyEvYmluL2Jhc2gKCmRlY2xhcmUgLXJ4IERPQ0tFUl9DT05GSUc9IiR7V09SS1NQQUNFU19ET0NLRVJDT05GSUdfUEFUSH0iCgojIERlbGV0ZSB0aGUgdHJ1c3RzdG9yZSBjcmVhdGVkIG9uIGV4aXQKZnVuY3Rpb24gY2xlYW51cCB7CiAgICBybSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIKfQoKY2VydFBhcmFtcz0iIgoKaWYgW1sgLWYgIiR7V09SS1NQQUNFU19TU0xDRVJURElSX1BBVEh9LyR7UEFSQU1TX0NBQ0VSVEZJTEV9IiBdXTsgdGhlbgogICAgIyBjcmVhdGUgdGhlIHRydXN0c3RvcmUgd2l0aCBleGlzdGluZyBjZXJ0cyBhdmFpbGFibGUKICAgIGtleXRvb2wgLWltcG9ydGtleXN0b3JlIC1zcmNrZXlzdG9yZSAiJEpBVkFfSE9NRS9saWIvc2VjdXJpdHkvY2FjZXJ0cyIgLXNyY3N0b3JldHlwZSBKS1MgLWRlc3RrZXlzdG9yZSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIgLXN0b3JlcGFzcyAiY2hhbmdlaXQiIC1zcmNzdG9yZXBhc3MgImNoYW5nZWl0IiA+IC90bXAvbG9ncyAyPiYxCiAgICBpZiBbICQ/IC1uZSAwIF07IHRoZW4KICAgICAgICBjYXQgL3RtcC9sb2dzCiAgICAgICAgZXhpdCAxCiAgICBmaQogICAgIyBhZGQgeW91ciBjZXJ0cyB0byB0aGUgbmV3IHRydXN0c3RvcmUgY3JlYXRlZAogICAga2V5dG9vbCAtaW1wb3J0IC1rZXlzdG9yZSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIgLXN0b3JlcGFzcyAiY2hhbmdlaXQiIC1maWxlICIke1dPUktTUEFDRVNfU1NMQ0VSVERJUl9QQVRIfS8ke1BBUkFNU19DQUNFUlRGSUxFfSIgLW5vcHJvbXB0CiAgICAjIHBhc3MgdHJ1c3RzdG9yZSBkZXRhaWxzIHRvIHRoZSBtdm4gY29tbWFuZAogICAgY2VydFBhcmFtcz0iLURqYXZheC5uZXQuc3NsLnRydXN0U3RvcmU9JHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyAtRGphdmF4Lm5ldC5zc2wudHJ1c3RTdG9yZVBhc3N3b3JkPWNoYW5nZWl0IgogICAgIyBjbGVhbiB0cnVzdHN0b3JlIG9uIGV4aXQKICAgIHRyYXAgY2xlYW51cCBFWElUCmZpCgojIEJ1aWxkIGFuZCBwdXNoIHRoZSBpbWFnZQptdm4gLUIgXAogICAgLUR1c2VyLmhvbWU9IiRIT01FIiBcCiAgICAtRGppYi5hbGxvd0luc2VjdXJlUmVnaXN0cmllcz0iJHtQQVJBTVNfSU5TRUNVUkVSRUdJU1RSWX0iIFwKICAgIC1EamliLnRvLmltYWdlPSIke1BBUkFNU19JTUFHRX0iIFwKICAgICRjZXJ0UGFyYW1zIFwKICAgIGNvbXBpbGUgXAogICAgY29tLmdvb2dsZS5jbG91ZC50b29sczpqaWItbWF2ZW4tcGx1Z2luOmJ1aWxkCgpjYXQgJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS8ke1BBUkFNU19ESVJFQ1RPUll9L3RhcmdldC9qaWItaW1hZ2UuZGlnZXN0IHwgdGVlICR7UkVTVUxUU19JTUFHRV9ESUdFU1RfUEFUSH0=\" |base64 -d \u003e\"/scripts/jib-maven-build-and-push.sh\"\nchmod +x /scripts/jib-*.sh;echo \"Running Script /scripts/jib-maven-build-and-push.sh\";\n  /scripts/jib-maven-build-and-push.sh;\n","securityContext":{"runAsNonRoot":true,"runAsUser":65532},"volumeMounts":[{"mountPath":"/scripts","name":"scripts-dir"}],"workingDir":"$(workspaces.source.path)/$(params.DIRECTORY)"}],"volumes":[{"emptyDir":{},"name":"empty-dir-volume"},{"emptyDir":{},"name":"scripts-dir"}],"workspaces":[{"description":"The workspace consisting of maven project.","name":"source","optional":false},{"description":"The workspace containing SSL certificates.","name":"sslcertdir","optional":true},{"description":"The workspace containing Docker configuration.","name":"dockerconfig","optional":true}]}}
+    tekton.dev/categories: containers
+    tekton.dev/pipelines.minVersion: 0.41.0
+    tekton.dev/tags: containers
+  creationTimestamp: "2024-11-21T05:06:44Z"
+  generation: 1
+  labels:
+    app.kubernetes.io/version: 0.3.2
+  name: jib-maven
+  namespace: anebhat
+  resourceVersion: "58176"
+  uid: 61f6bf72-3b5f-445a-95e3-a12343f8d973
+spec:
+  description: This Task builds Java/Kotlin/Groovy/Scala source into a container image
+    using Google's Jib tool. Jib works with Maven and Gradle projects, and this template
+    is for Maven projects.
+  params:
+  - description: Name of the image to build
+    name: IMAGE
+    type: string
+  - default: .
+    description: The directory containing the app, relative to the source repository
+      root
+    name: DIRECTORY
+    type: string
+  - default: "false"
+    description: Whether to allow insecure registry
+    name: INSECUREREGISTRY
+    type: string
+  - default: service-ca.crt
+    description: CA cert file name for insecure registry service
+    name: CACERTFILE
+    type: string
+  results:
+  - description: Digest of the image just built.
+    name: IMAGE_DIGEST
+    type: string
+  stepTemplate:
+    computeResources: {}
+    env:
+    - name: PARAMS_DIRECTORY
+      value: $(params.DIRECTORY)
+    - name: WORKSPACES_SOURCE_PATH
+      value: $(workspaces.source.path)
+    - name: WORKSPACES_SSLCERTDIR_PATH
+      value: $(workspaces.sslcertdir.path)
+    - name: WORKSPACES_DOCKERCONFIG_BOUND
+      value: $(workspaces.dockerconfig.bound)
+    - name: WORKSPACES_DOCKERCONFIG_PATH
+      value: $(workspaces.dockerconfig.path)
+    - name: PARAMS_CACERTFILE
+      value: $(params.CACERTFILE)
+    - name: PARAMS_INSECUREREGISTRY
+      value: $(params.INSECUREREGISTRY)
+    - name: PARAMS_IMAGE
+      value: $(params.IMAGE)
+    - name: RESULTS_IMAGE_DIGEST_PATH
+      value: $(results.IMAGE_DIGEST.path)
+  steps:
+  - computeResources: {}
+    env:
+    - name: HOME
+      value: /tekton/home
+    image: registry.access.redhat.com/ubi8/openjdk-11:latest
+    name: build-and-push
+    script: |
+      set -e
+      printf '%s' "IyEvYmluL2Jhc2gKCmRlY2xhcmUgLXJ4IERPQ0tFUl9DT05GSUc9IiR7V09SS1NQQUNFU19ET0NLRVJDT05GSUdfUEFUSH0iCgojIERlbGV0ZSB0aGUgdHJ1c3RzdG9yZSBjcmVhdGVkIG9uIGV4aXQKZnVuY3Rpb24gY2xlYW51cCB7CiAgICBybSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIKfQoKY2VydFBhcmFtcz0iIgoKaWYgW1sgLWYgIiR7V09SS1NQQUNFU19TU0xDRVJURElSX1BBVEh9LyR7UEFSQU1TX0NBQ0VSVEZJTEV9IiBdXTsgdGhlbgogICAgIyBjcmVhdGUgdGhlIHRydXN0c3RvcmUgd2l0aCBleGlzdGluZyBjZXJ0cyBhdmFpbGFibGUKICAgIGtleXRvb2wgLWltcG9ydGtleXN0b3JlIC1zcmNrZXlzdG9yZSAiJEpBVkFfSE9NRS9saWIvc2VjdXJpdHkvY2FjZXJ0cyIgLXNyY3N0b3JldHlwZSBKS1MgLWRlc3RrZXlzdG9yZSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIgLXN0b3JlcGFzcyAiY2hhbmdlaXQiIC1zcmNzdG9yZXBhc3MgImNoYW5nZWl0IiA+IC90bXAvbG9ncyAyPiYxCiAgICBpZiBbICQ/IC1uZSAwIF07IHRoZW4KICAgICAgICBjYXQgL3RtcC9sb2dzCiAgICAgICAgZXhpdCAxCiAgICBmaQogICAgIyBhZGQgeW91ciBjZXJ0cyB0byB0aGUgbmV3IHRydXN0c3RvcmUgY3JlYXRlZAogICAga2V5dG9vbCAtaW1wb3J0IC1rZXlzdG9yZSAiJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyIgLXN0b3JlcGFzcyAiY2hhbmdlaXQiIC1maWxlICIke1dPUktTUEFDRVNfU1NMQ0VSVERJUl9QQVRIfS8ke1BBUkFNU19DQUNFUlRGSUxFfSIgLW5vcHJvbXB0CiAgICAjIHBhc3MgdHJ1c3RzdG9yZSBkZXRhaWxzIHRvIHRoZSBtdm4gY29tbWFuZAogICAgY2VydFBhcmFtcz0iLURqYXZheC5uZXQuc3NsLnRydXN0U3RvcmU9JHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS90cnVzdHN0b3JlLmprcyAtRGphdmF4Lm5ldC5zc2wudHJ1c3RTdG9yZVBhc3N3b3JkPWNoYW5nZWl0IgogICAgIyBjbGVhbiB0cnVzdHN0b3JlIG9uIGV4aXQKICAgIHRyYXAgY2xlYW51cCBFWElUCmZpCgojIEJ1aWxkIGFuZCBwdXNoIHRoZSBpbWFnZQptdm4gLUIgXAogICAgLUR1c2VyLmhvbWU9IiRIT01FIiBcCiAgICAtRGppYi5hbGxvd0luc2VjdXJlUmVnaXN0cmllcz0iJHtQQVJBTVNfSU5TRUNVUkVSRUdJU1RSWX0iIFwKICAgIC1EamliLnRvLmltYWdlPSIke1BBUkFNU19JTUFHRX0iIFwKICAgICRjZXJ0UGFyYW1zIFwKICAgIGNvbXBpbGUgXAogICAgY29tLmdvb2dsZS5jbG91ZC50b29sczpqaWItbWF2ZW4tcGx1Z2luOmJ1aWxkCgpjYXQgJHtXT1JLU1BBQ0VTX1NPVVJDRV9QQVRIfS8ke1BBUkFNU19ESVJFQ1RPUll9L3RhcmdldC9qaWItaW1hZ2UuZGlnZXN0IHwgdGVlICR7UkVTVUxUU19JTUFHRV9ESUdFU1RfUEFUSH0=" |base64 -d >"/scripts/jib-maven-build-and-push.sh"
+      chmod +x /scripts/jib-*.sh;echo "Running Script /scripts/jib-maven-build-and-push.sh";
+        /scripts/jib-maven-build-and-push.sh;
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65532
+    volumeMounts:
+    - mountPath: /scripts
+      name: scripts-dir
+    workingDir: $(workspaces.source.path)/$(params.DIRECTORY)
+  volumes:
+  - emptyDir: {}
+    name: empty-dir-volume
+  - emptyDir: {}
+    name: scripts-dir
+  workspaces:
+  - description: The workspace consisting of maven project.
+    name: source
+  - description: The workspace containing SSL certificates.
+    name: sslcertdir
+    optional: true
+  - description: The workspace containing Docker configuration.
+    name: dockerconfig
+    optional: true

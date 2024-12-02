@@ -31,3 +31,28 @@ source ./test/helper/helper.sh
     # assering the taskrun status, making sure all steps have been successful
     assert_tekton_resource "pipelinerun" --partial '(Failed: 0, Cancelled 0), Skipped: 0'
 }
+
+        
+
+
+
+run tkn pipeline start task-jib-maven \
+        --param="URL=${E2E_MAVEN_PARAMS_URL}" \
+        --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \
+        --param="VERBOSE=true" \
+        --workspace="name=source,claimName=task-maven,subPath=source" \
+        --workspace="name=dockerconfig,secret=docker-config" \
+        --filename=../pipeline-maven-jib.yaml \
+        --showlog
+    assert_success
+
+run tkn pipeline start task-jib-maven \
+        --param="URL=${E2E_MAVEN_PARAMS_URL}" \
+        --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \
+        --param="VERBOSE=true" \
+        --param="IMAGE=${E2E_JIB_MAVEN_IMAGE}" \
+        --workspace="name=source,claimName=task-maven,subPath=source" \
+        --workspace="name=dockerconfig,secret=docker-config" \
+        --filename=test/e2e/resources/pipeline-maven-jib.yaml \
+        --showlog
+    assert_success
