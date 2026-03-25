@@ -1,0 +1,84 @@
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: jib-maven
+  labels:
+    app.kubernetes.io/version: {{ .Chart.Version }}
+{{- if .Values.annotations }}
+  annotations:
+  {{- .Values.annotations | toYaml | nindent 4 }}
+{{- end }}
+spec:
+  description: >-
+    This Task builds Java/Kotlin/Groovy/Scala source into a container image using Google's Jib tool.
+    Jib works with Maven and Gradle projects, and this template is for Maven projects.
+
+  workspaces:
+    - name: source
+      optional: false
+      description: The workspace consisting of maven project.
+    - name: sslcertdir
+      optional: true
+      description: The workspace containing SSL certificates.
+    - name: dockerconfig
+      optional: true
+      description: The workspace containing Docker configuration.
+
+  params:
+    - name: IMAGE
+      description: Name of the image to build
+    - name: DIRECTORY
+      type: string
+      description: The directory containing the app, relative to the source repository root
+      default: .
+    - name: INSECUREREGISTRY
+      type: string
+      description: Whether to allow insecure registry
+      default: "false"
+    - name: CACERTFILE
+      type: string
+      description: CA cert file name for insecure registry service
+      default: "service-ca.crt"
+
+  results:
+    - name: IMAGE_DIGEST
+      description: Digest of the image just built.
+
+  stepTemplate:
+    env:
+{{- $variables := list
+      "params.DIRECTORY"
+      "workspaces.source.path"
+      "workspaces.sslcertdir.path"
+      "workspaces.dockerconfig.bound"
+      "workspaces.dockerconfig.path"
+      "params.CACERTFILE"
+      "params.INSECUREREGISTRY"
+      "params.IMAGE"
+      "results.IMAGE_DIGEST.path"
+}}
+{{- include "environment" ( list $variables ) | nindent 6 }}
+
+  steps:
+    - name: build-and-push
+      image: {{ .Values.images.maven }}
+      env:
+        - name: HOME
+          value: /tekton/home
+
+      script: |
+{{- include "load_scripts" ( list . ( list "jib-" ) ( list "/scripts/jib-maven-build-and-push.sh" ) ) | nindent 8 }}
+      workingDir: $(workspaces.source.path)/$(params.DIRECTORY)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      volumeMounts:
+        - name: scripts-dir
+          mountPath: /scripts
+
+  volumes:
+    - name: empty-dir-volume
+      emptyDir: {}
+    - name: scripts-dir
+      emptyDir: {}
