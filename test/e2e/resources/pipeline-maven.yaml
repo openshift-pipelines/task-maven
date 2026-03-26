@@ -23,6 +23,9 @@ spec:
       type: string
     - name: VERBOSE
       type: string
+    - name: ENV_VARS
+      type: array
+      default: []
 
   tasks:
     - name: git-clone
@@ -58,6 +61,8 @@ spec:
             - "validate"
         - name: SUBDIRECTORY
           value: $(context.pipelineRun.name)
+        - name: ENV_VARS
+          value: "$(params.ENV_VARS[*])"
       runAfter:
         - git-clone
       workspaces:

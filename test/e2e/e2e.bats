@@ -16,6 +16,7 @@ source ./test/helper/helper.sh
         --param="URL=${E2E_MAVEN_PARAMS_URL}" \
         --param="REVISION=${E2E_MAVEN_PARAMS_REVISION}" \
         --param="VERBOSE=true" \
+        --param="ENV_VARS=MAVEN_CLEAR_REPO=false" \
         --workspace="name=server_secret,secret=${E2E_MAVEN_PARAMS_SERVER_SECRET}" \
         --workspace="name=proxy_secret,secret=${E2E_MAVEN_PARAMS_PROXY_SECRET}" \
         --workspace="name=proxy_configmap,secret=${E2E_MAVEN_PARAMS_PROXY_CONFIGMAP}" \

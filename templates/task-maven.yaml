@@ -51,6 +51,10 @@ spec:
         The subdirectory within the repository for sources on
         which we want to execute maven goals.
       default: "."
+    - name: ENV_VARS
+      description: Array containing string of Environment Variables as "KEY=VALUE"
+      type: array
+      default: []
 
   stepTemplate:
     env:
@@ -93,10 +97,12 @@ spec:
           value: /tekton/home
       image: {{ .Values.images.maven }}$(params.JAVA_VERSION):latest
       workingDir: $(workspaces.source.path)/$(params.SUBDIRECTORY)
-      command: ["/usr/bin/mvn"]
+      command: ["/usr/bin/env"]
       args:
-        - -s
-        - maven-generate/settings.xml
+        - "$(params.ENV_VARS[*])"
+        - "/usr/bin/mvn"
+        - "-s"
+        - "maven-generate/settings.xml"
         - "$(params.GOALS[*])"
       securityContext:
         runAsNonRoot: true
